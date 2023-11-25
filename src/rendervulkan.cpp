@@ -3587,6 +3587,8 @@ extern uint32_t g_reshade_technique_idx;
 std::unique_ptr<std::thread> defer_wait_thread;
 uint64_t defer_sequence = 0;
 
+extern bool g_bHDRItmEnable;
+
 bool vulkan_composite( struct FrameInfo_t *frameInfo, std::shared_ptr<CVulkanTexture> pPipewireTexture, bool partial, bool defer, std::shared_ptr<CVulkanTexture> pOutputOverride, bool increment )
 {
 	if ( defer_wait_thread )
@@ -3759,7 +3761,7 @@ bool vulkan_composite( struct FrameInfo_t *frameInfo, std::shared_ptr<CVulkanTex
 	}
 	else
 	{
-		cmdBuffer->bindPipeline( g_device.pipeline(SHADER_TYPE_BLIT, frameInfo->layerCount, frameInfo->ycbcrMask(), 0u, frameInfo->colorspaceMask(), outputTF ));
+		cmdBuffer->bindPipeline( g_device.pipeline(SHADER_TYPE_BLIT, frameInfo->layerCount, frameInfo->ycbcrMask(), 0u, frameInfo->colorspaceMask(), outputTF, g_bOutputHDREnabled ? g_bHDRItmEnable : false ));
 		bind_all_layers(cmdBuffer.get(), frameInfo);
 		cmdBuffer->bindTarget(compositeImage);
 		cmdBuffer->uploadConstants<BlitPushData_t>(frameInfo);
